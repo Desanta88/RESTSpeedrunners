@@ -1,10 +1,94 @@
 <html>
+    <script>
+        function getRecord(){
+            var baseURL="Speedrunners.php/";
+            //var id=document.getElementById("idGET");
+            fetch(baseURL+="5")
+            .then(response=>response.json())
+            .then(json=>{
+                    sjson=JSON.stringify(json);
+                    res.innerHTML=sjson;
+                }
+            );
+        }
+        function addRecord(){
+            var baseURL="Speedrunners.php/ADD"
+            fetch(baseURL,{
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    Username:"hhthht",
+                    Nationality:"Finnish",
+                    Gender:"Male",
+                    TotalSpeedruns:105
+                })
+            })
+            .then(response=>{
+                if(response.status==200){
+                    res.innerHTML="Speedrunner aggiunto";
+                }
+            });
+        }
+        function updateRecord(){
+            var baseURL="Speedrunners.php/EDIT/";
+            fetch(baseURL+="22",{
+                method:"PUT",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    Username:"ciao",
+                    Nationality:"io",
+                    Gender:"Male",
+                    TotalSpeedruns:105
+                })
+            })
+            .then(response=>{
+                if(response.status==200){
+                    res.innerHTML="Speedrunner modificato";
+                }
+                else if(response.status==404){
+                    res.innerHTML="Speedrunner non trovato";
+                }
+            });
+        }
+        function deleteRecord(){
+            var baseURL="Speedrunners.php/DEL/";
+            fetch(baseURL+="24",{
+                method:"DELETE"
+            })
+            .then(response=>{
+                if(response.status==200){
+                    res.innerHTML="Speedrunner cancellato";
+                }
+                else if(response.status==404){
+                    res.innerHTML="Speedrunner non cancellato";
+                }
+            });
+        }
+    </script>
     <head>
-        <script src="prova.js"></script>
+        <!--<script type="text/javascript" defer src="/RESTSpeedrunners/RESTFunctions.js"></script>-->
+
         <title>Speedrunners</title>
     </head>
     <body>
-        <button onclick="prova()">GET</button>
+        <button onclick="getRecord()">GET</button>
+        <input id="idGET" type="number" placeholder="insert an id"><br><br>
+        <button onclick="addRecord()">POST</button>
+        <input type="text" placeholder="insert a username">
+        <input type="text" placeholder="insert a nationality">
+        <input type="text" placeholder="insert a sex">
+        <input type="number" placeholder="insert a number"><br><br>
+        <button onclick="updateRecord()">UPDATE</button>
+        <input type="text" placeholder="insert a username">
+        <input type="text" placeholder="insert a nationality">
+        <input type="text" placeholder="insert a sex">
+        <input type="number" placeholder="insert a number"><br><br>
+        <button onclick="deleteRecord()">DELETE</button>
+        <input type="number" placeholder="insert an id"><br><br>
         <div id="res"></div>
     </body>
 </html>

@@ -2,7 +2,6 @@
     $method=$_SERVER["REQUEST_METHOD"];
     $url=parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
     $url=explode("/",$url);
-
     if(isset($_SERVER["CONTENT_TYPE"])){
         $content_type=$_SERVER["CONTENT_TYPE"];
         $content_type=explode("/",$content_type);
@@ -29,7 +28,7 @@
             $statement->execute();
             $data=$statement->fetchAll();
             if(empty($data)==false)
-                echo json_encode($data);
+                echo json_encode($data); 
             else
                 http_response_code(404);
         }
@@ -46,16 +45,14 @@
     else if($method=="POST"){
         if(count($url)==3 && $url[2]=="ADD"){
             $body=file_get_contents("php://input");
-            $fields=explode(",",$body);
-            $new_content="";
-            for($i=0;$i<count($fields);$i++){
-                $new_content.=explode(":",$fields[$i])[1].";";
-            }
-            $new_content=explode(";",$new_content);
-            $user=$new_content[0];
-            $nationality=$new_content[1];
-            $gender=$new_content[2];
-            $totalSpeedruns=$new_content[3];
+            $data=json_decode($body,true);
+            $user=$data["Username"];
+           
+            $nationality=$data["Nationality"];
+          
+            $gender=$data["Gender"];
+           
+            $totalSpeedruns=$data["TotalSpeedruns"];
             
             $query="INSERT INTO speedrunner (Username,Nationality,Gender,TotalSpeedruns) VALUES(:type,:type2,:type3,:type4)";
             $statement=$connection->prepare($query);
@@ -65,8 +62,10 @@
             $statement->bindParam(":type4",$totalSpeedruns,PDO::PARAM_STR);
             $statement->execute();
 
-            http_response_code(200);
+            print_r($url);
         }
+        else
+            echo strval(count($url));
     }
     else if($method=="PUT"){
         if(count($url)==4 && $url[2]=="EDIT" && $url[3]!=""){
@@ -79,7 +78,7 @@
           
             $gender=$data["Gender"];
            
-            $totalSpeedruns=$data["TotalSpeedRuns"];
+            $totalSpeedruns=$data["TotalSpeedruns"];
             $runner=$url[3];
             
             $query="UPDATE speedrunner SET Username=:type,Nationality=:type2,Gender=:type3,TotalSpeedruns=:type4 WHERE Id=:type5";
@@ -94,12 +93,12 @@
             if($statement->rowCount()==0)
                 http_response_code(404);
             else
-                http_response_code(200);
+                print_r($url);
         }
         else
-            http_response_code(404);
+            echo strval(count($url));
     }
-    else if($method="DELETE"){
+    else if($method=="DELETE"){
         if(count($url)==4 && $url[3]!="" && $url[2]=="DEL")
         {
             $id=$url[3];
@@ -115,5 +114,10 @@
         }
         else
             http_response_code(404);
+    }
+    else if($method=="OPTIONS"){
+        if(count($url)==3 && $url[1]=="RESTSpeedrunners"){
+            header("Allow: GET,POST,PUT,DELETE",false,200);
+        }
     }
 ?>
