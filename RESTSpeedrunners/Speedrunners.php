@@ -2,6 +2,7 @@
     $method=$_SERVER["REQUEST_METHOD"];
     $url=parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
     $url=explode("/",$url);
+
     if(isset($_SERVER["CONTENT_TYPE"])){
         $content_type=$_SERVER["CONTENT_TYPE"];
         $content_type=explode("/",$content_type);
@@ -28,7 +29,7 @@
             $statement->execute();
             $data=$statement->fetchAll();
             if(empty($data)==false)
-                echo json_encode($data); 
+                echo json_encode($data);
             else
                 http_response_code(404);
         }
@@ -119,5 +120,7 @@
         if(count($url)==3 && $url[1]=="RESTSpeedrunners"){
             header("Allow: GET,POST,PUT,DELETE",false,200);
         }
+        else
+            http_response_code(404);
     }
 ?>
